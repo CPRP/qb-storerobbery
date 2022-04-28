@@ -88,7 +88,10 @@ CreateThread(function()
                                         if street2 ~= nil then
                                             streetLabel = streetLabel .. " " .. street2
                                         end
-                                        TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
+                                        if math.random(1,1000) <= 470 then
+                                            exports['qb-dispatch']:StoreRobbery(camId)
+                                        end
+                                        -- TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
                                         copsCalled = true
                                     end
                                 else
@@ -438,27 +441,13 @@ RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, stree
         else
             cameraId = Config.Registers[key].camId
         end
-        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-        TriggerServerEvent('police:server:policeAlert', 'Storerobbery in progress')
-
-        local transG = 250
-        local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-        SetBlipSprite(blip, 458)
-        SetBlipColour(blip, 1)
-        SetBlipDisplay(blip, 4)
-        SetBlipAlpha(blip, transG)
-        SetBlipScale(blip, 1.0)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString("10-31 | Shop Robbery")
-        EndTextCommandSetBlipName(blip)
-        while transG ~= 0 do
-            Wait(180 * 4)
-            transG = transG - 1
-            SetBlipAlpha(blip, transG)
-            if transG == 0 then
-                SetBlipSprite(blip, 2)
-                RemoveBlip(blip)
-                return
+        if not AlertSend then
+            if math.random(1,1000) <= 470 then
+                exports['qb-dispatch']:StoreRobbery(camId)
+                AlertSend = true
+                SetTimeout(math.random(30000,60000), function()
+                    AlertSend = false
+                end)
             end
         end
     end
