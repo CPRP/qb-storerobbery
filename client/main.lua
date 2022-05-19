@@ -88,10 +88,7 @@ CreateThread(function()
                                         if street2 ~= nil then
                                             streetLabel = streetLabel .. " " .. street2
                                         end
-                                        if math.random(1,1000) <= 470 then
-                                            exports['qb-dispatch']:StoreRobbery(camId)
-                                        end
-                                        -- TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
+                                        TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
                                         copsCalled = true
                                     end
                                 else
