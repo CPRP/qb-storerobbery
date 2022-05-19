@@ -435,20 +435,12 @@ end)
 
 RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if PlayerJob.name == "police" and onDuty then
-        local cameraId = 4
-        if type == "safe" then
-            cameraId = Config.Safes[key].camId
-        else
-            cameraId = Config.Registers[key].camId
-        end
-        if not AlertSend then
-            if math.random(1,1000) <= 470 then
-                exports['qb-dispatch']:StoreRobbery(camId)
-                AlertSend = true
-                SetTimeout(math.random(30000,60000), function()
-                    AlertSend = false
-                end)
-            end
-        end
+    local cameraId = 4
+    if type == "safe" then
+        cameraId = Config.Safes[key].camId
+    else
+        cameraId = Config.Registers[key].camId
     end
+    exports['ps-dispatch']:StoreRobbery(camId)
+end
 end)
