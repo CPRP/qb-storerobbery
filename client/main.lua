@@ -44,7 +44,6 @@ CreateThread(function()
         Wait(3)
     end
 end)
-
 CreateThread(function()
     while true do
         Wait(1)
@@ -79,15 +78,18 @@ CreateThread(function()
                                     end
 
                                     if not copsCalled then
-                                        pos = GetEntityCoords(PlayerPedId())
-                                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                                        local pos = GetEntityCoords(PlayerPedId())
+					local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                                         local street1 = GetStreetNameFromHashKey(s1)
                                         local street2 = GetStreetNameFromHashKey(s2)
                                         local streetLabel = street1
                                         if street2 ~= nil then
                                             streetLabel = streetLabel .. " " .. street2
                                         end
-                                        TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
+                                        if math.random(1,1000) <= 470 then
+                                            exports['ps-dispatch']:StoreRobbery(camId)
+                                        end
+                                        -- TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
                                         copsCalled = true
                                     end
                                 else
@@ -436,14 +438,22 @@ RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
     Config.Safes[safe].robbed = bool
 end)
 
-RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords)
+RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if PlayerJob.name == "police" and onDuty then
-    local cameraId = 4
-    if type == "safe" then
-        cameraId = Config.Safes[key].camId
-    else
-        cameraId = Config.Registers[key].camId
+        local cameraId = 4
+        if type == "safe" then
+            cameraId = Config.Safes[key].camId
+        else
+            cameraId = Config.Registers[key].camId
+        end
+        if not AlertSend then
+            if math.random(1,1000) <= 470 then
+                exports['ps-dispatch']:StoreRobbery(camId)
+                AlertSend = true
+                SetTimeout(math.random(30000,60000), function()
+                    AlertSend = false
+                end)
+            end
+        end
     end
-    exports['ps-dispatch']:StoreRobbery(camId)
-end
 end)
