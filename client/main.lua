@@ -149,9 +149,9 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                         local street2 = GetStreetNameFromHashKey(s2)
                         local streetLabel = street1
                         if street2 ~= nil then
-                            streetLabel = streetLabel .. " " .. street2
+                            exports['ps-dispatch']:StoreRobbery(camId)
                         end
-                        TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        -- TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
                         copsCalled = true
                     end
                 else
@@ -167,9 +167,9 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                         local street2 = GetStreetNameFromHashKey(s2)
                         local streetLabel = street1
                         if street2 ~= nil then
-                            streetLabel = streetLabel .. " " .. street2
+                            exports['ps-dispatch']:StoreRobbery(camId)
                         end
-                        TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        -- TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
                         copsCalled = true
                     end
 
