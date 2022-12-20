@@ -436,21 +436,50 @@ RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
     Config.Safes[safe].robbed = bool
 end)
 
-RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
-    if PlayerJob.name == "police" and onDuty then
-        local cameraId = 4
-        if type == "safe" then
-            cameraId = Config.Safes[key].camId
-        else
-            cameraId = Config.Registers[key].camId
-        end
-        if not AlertSend then
-            if math.random(1,1000) <= 470 then
-                exports['ps-dispatch']:StoreRobbery(camId)
-                AlertSend = true
-                SetTimeout(math.random(30000,60000), function()
-                    AlertSend = false
-                end)
+-- RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords) -- THE OLD WAY
+--     if PlayerJob.name == "police" and onDuty then
+--         local cameraId = 4
+--         if type == "safe" then
+--             cameraId = Config.Safes[key].camId
+--         else
+--             cameraId = Config.Registers[key].camId
+--         end
+--         if not AlertSend then
+--             if math.random(1,1000) <= 470 then
+--                 exports['ps-dispatch']:StoreRobbery(camId)
+--                 AlertSend = true
+--                 SetTimeout(math.random(30000,60000), function()
+--                     AlertSend = false
+--                 end)
+--             end
+--         end
+--     end
+-- end)
+
+RegisterNetEvent('qb-storerobbery:client:robberyCall', function(_, _, _, coords) -- THE NEW WAY
+    if (PlayerJob.name == "police" or PlayerJob.type == "leo") and onDuty then
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        exports['ps-dispatch']:StoreRobbery(camId)
+        -- TriggerServerEvent('police:server:policeAlert', Lang:t("email.storerobbery_progress"))
+
+        local transG = 250
+        local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+        SetBlipSprite(blip, 458)
+        SetBlipColour(blip, 1)
+        SetBlipDisplay(blip, 4)
+        SetBlipAlpha(blip, transG)
+        SetBlipScale(blip, 1.0)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentString(Lang:t("email.shop_robbery"))
+        EndTextCommandSetBlipName(blip)
+        while transG ~= 0 do
+            Wait(180 * 4)
+            transG = transG - 1
+            SetBlipAlpha(blip, transG)
+            if transG == 0 then
+                SetBlipSprite(blip, 2)
+                RemoveBlip(blip)
+                return
             end
         end
     end
